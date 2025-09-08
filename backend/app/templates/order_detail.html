@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="main-heading order-date">Дата составления заявки: {{ order.date }}</p>
+
+<h1 class="main-heading order-detail">Составление заявки</h1>
+<div class="order-items">
+    {% for car in order_cars %}
+    <div class="order-item">
+        <img src="{{ car.image_url }}" alt="{{ car.name }}" width="200" class="order-item-img">
+        <div class="text">
+            <p class="small">Госномер: {{ car.license_plate }}</p>
+            <p class="small">VIN: {{ car.VIN }}</p>
+            <p class="small">Пробег: {{ car.mileage }} км</p>
+            <p class="small">Стоимость: {{ car.price }} ₽</p>
+        </div>
+        <div class="m-m_field">
+            <div class="m-m_comment">{{car.comment }}</div>
+            <p class="small">Амортизация: {{ car.depreciation }} ₽</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

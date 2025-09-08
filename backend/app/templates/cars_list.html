@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="main-heading">Автомобили</h1>
+<form method="get" action="{% url 'cars_list' %}">
+    <input class="search" type="text" name="search" placeholder="Поиск автомобилей" value="{{ search }}">
+</form>
+<div class="cards">
+    {% for c in cars %}
+    <a href="{% url 'car_detail' c.id %}">
+        <div class="card">
+            <img src="{{ c.image_url }}" alt="{{ c.name }}">
+            <div class="text">
+                <p class="small">{{ c.name }}</h3>
+                <p class="small">Госномер: {{ c.license_plate }}</p>
+                <p class="small">VIN: {{ c.VIN }}</p>
+                <p class="small">Цена: {{ c.price }} ₽</p>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+<div class="cart">
+    <a href="{% url 'order_detail' order_id=order.id %}">
+        <img src="{{ cart_icon_url }}" alt="Корзина">
+        <p>Количество автомобилей: {{ order_count }}</p>
+    </a>
+</div>
+{% endblock %}
