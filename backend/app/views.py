@@ -17,7 +17,7 @@ cars = [
         'id': 1,
         'name': 'GAZelle Business',
         'license_plate': 'А911ВЕ77',
-        'VIN': 'XW8ZZZ61ZHG047==860',
+        'VIN': 'XW8ZZZ61ZHG047860',
         'mileage': 120000,
         'price': 1200000,
         'img_key': 'GAZelle1.jpeg',
