@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="main-heading order-date">Дата составления заявки: {{ order.date }}</p>
+<div class="order-data">
+    <p class="small">ID заявки: {{ order.id }}</p>
+    <p class="small">Дата составления заявки: {{ order.date }}</p>
+    <p class="small">Статус заявки: {{ order.status }}</p>
+    <p class="small">Амортизация автомобилей: {{ order.total_depreciation }} ₽</p>
+</div>
 
 <h1 class="main-heading order-detail">Составление заявки</h1>
 <div class="order-items">
@@ -15,7 +20,6 @@
         </div>
         <div class="m-m_field">
             <div class="m-m_comment">{{car.comment }}</div>
-            <p class="small">Амортизация: {{ car.depreciation }} ₽</p>
         </div>
     </div>
     {% endfor %}

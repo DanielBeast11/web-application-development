@@ -78,6 +78,8 @@ cars = [
 order = {
     "id": 1,
     "date": "07.09.2025",
+    'status': "черновик",
+    "total_depreciation": 1061000,
     "cars": [
         {
             "id": 1,
@@ -102,15 +104,15 @@ order = {
             "depreciation": 561000
         }
     ],
-    "total_depreciation": 1061000
 }
 
 home_icon_url = get_image_url("home-icon.svg")
 cart_icon_url = get_image_url("cart-icon.png")
 
 def cars_list(request):
-    query = request.GET.get("search", "").lower()
-    filtered_cars = [c.copy() for c in cars if query in c['name'].lower()]
+    query = request.GET.get("search", "")
+    lower_case_query = query.lower()
+    filtered_cars = [c.copy() for c in cars if lower_case_query in c['name'].lower()]
 
     for car in filtered_cars:
         car['image_url'] = get_image_url(car['img_key'])

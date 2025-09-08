@@ -176,8 +176,9 @@ input.search::placeholder {
   text-align: center;
 }
 
-p.order-date {
+.order-data {
   width: 1000px;
+  padding-top: 12px;
 }
 
 h1.order-detail {
@@ -193,6 +194,9 @@ h1.order-detail {
 
 .order-item {
   display: flex;
+  border: 1px solid var(--black-border);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .order-item > .order-item-img {
@@ -213,7 +217,7 @@ h1.order-detail {
 .order-item > .m-m_field {
   display: flex;
   flex-direction: column;
-  padding: 6px 12px;
+  padding: 12px 6px;
   gap: 12px;
   width: 300px;
 }
@@ -221,7 +225,7 @@ h1.order-detail {
 .order-item > .m-m_field > .m-m_comment {
   height: 200px;
   background-color: var(--gray);
-  color: var(--text-gray);
+  color: var(--black);
   padding: 10px;
   font-size: 20px;
   flex-grow: 1;
