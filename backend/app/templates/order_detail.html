@@ -13,6 +13,7 @@
     <div class="order-item">
         <img src="{{ car.image_url }}" alt="{{ car.name }}" width="200" class="order-item-img">
         <div class="text">
+            <p class="small">{{car.name}}</p>
             <p class="small">Госномер: {{ car.license_plate }}</p>
             <p class="small">VIN: {{ car.VIN }}</p>
             <p class="small">Пробег: {{ car.mileage }} км</p>

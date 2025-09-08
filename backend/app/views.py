@@ -16,8 +16,8 @@ cars = [
     {
         'id': 1,
         'name': 'GAZelle Business',
-        'license_plate': 'А902ВЕ77',
-        'VIN': 'XW8ZZZ61ZHG047860',
+        'license_plate': 'А911ВЕ77',
+        'VIN': 'XW8ZZZ61ZHG047==860',
         'mileage': 120000,
         'price': 1200000,
         'img_key': 'GAZelle1.jpeg',
@@ -30,7 +30,7 @@ cars = [
         'VIN': 'XW8ZZZ61ZHG457860',
         'mileage': 100000,
         'price': 2500000,
-        'img_key': 'FordTransit1.jpeg',
+        'img_key': 'FordTransit1.jpg',
         'description': 'Среднетоннажный фургон Ford Transit с дизельным двигателем 2.2 TDCi'
     },
     {
@@ -66,10 +66,10 @@ cars = [
     {
         'id': 6,
         'name': 'Iveco Daily 70C15',
-        'license_plate': 'C999XЕ77',
+        'license_plate': 'C100XЕ77',
         'VIN': 'XW8ZZZ61ZHG047341',
         'mileage': 165000,
-        'price': 1400000,
+        'price': 1700000,
         'img_key': 'Iveco2.png',
         'description': 'Тяжелый грузовик Iveco Daily 70C15 с дизельным двигателем F1C'
     }
@@ -79,21 +79,21 @@ order = {
     "id": 1,
     "date": "07.09.2025",
     'status': "черновик",
-    "total_depreciation": 1061000,
+    "total_depreciation": 942000,
     "cars": [
         {
-            "id": 1,
+            "id": 2,
             "name": "Ford Transit",
             "license_plate": "А923ВЕ77",
             "VIN": "XW8ZZZ61ZHG457860",
             "mileage": 100000,
             "price": 2500000,
-            "img_key": "FordTransit1.jpeg",
+            "img_key": "FordTransit1.jpg",
             "comment": "Основной грузовик",
             "depreciation": 500000
         },
         {
-            "id": 2,
+            "id": 3,
             "name": "Iveco Daily 50C15",
             "license_plate": "C999XЕ77",
             "VIN": "XW8ZZZ61ZHG023860",
@@ -101,7 +101,7 @@ order = {
             "price": 1300000,
             "img_key": "Iveco1.jpg",
             "comment": "Резервный грузовик",
-            "depreciation": 561000
+            "depreciation": 442000
         }
     ],
 }
