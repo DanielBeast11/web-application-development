@@ -176,56 +176,55 @@ input.search::placeholder {
   text-align: center;
 }
 
-.order-data {
+.request-data {
   width: 1000px;
   padding-top: 12px;
 }
 
-h1.order-detail {
+h1.request-detail {
   padding-top: 0px;
 }
 
-.order-items {
+.request-items {
   display: flex;
   flex-direction: column;
   width: 1000px;
   gap: 50px;
 }
 
-.order-item {
+.request-item {
   display: flex;
   border: 1px solid var(--black-border);
   border-radius: 12px;
   overflow: hidden;
 }
 
-.order-item > .order-item-img {
+.request-item > .request-item-img {
   width: 400px;
   height: 300px;
   object-fit: cover;
 }
 
-.order-item > .text {
+.request-item > .text {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
   padding: 12px;
   width: 300px;
 }
 
-.order-item > .m-m_field {
+.request-item > .m-m_field {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 12px 6px;
   gap: 12px;
   width: 300px;
 }
 
-.order-item > .m-m_field > .m-m_comment {
-  height: 200px;
-  background-color: var(--gray);
-  color: var(--black);
+.request-item > .m-m_field > .m-m_mileage {
   padding: 10px;
   font-size: 20px;
-  flex-grow: 1;
 }
