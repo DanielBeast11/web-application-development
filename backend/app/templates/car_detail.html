@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="main-heading">{{ car.name }}</h1>
+
+<div class="car-detail">
+    <img src="{{ car.image_url }}" alt="{{ car.name }}" class="car-detail-img">
+    <div class="text">
+        <p>Госномер: {{ car.license_plate }}</p>
+        <p>VIN: {{ car.VIN }}</p>
+        <p>Стоимость: {{ car.price }} ₽</p>
+        <p>{{ car.description }}</p>
+    </div>
+</div>
+{% endblock %}
