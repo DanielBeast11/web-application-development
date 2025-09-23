@@ -2,27 +2,40 @@
 {% block content %}
 <h1 class="main-heading">Автомобили</h1>
 <form method="get" action="{% url 'cars_list' %}">
-    <input class="search" type="text" name="car_search" placeholder="Поиск автомобилей" value="{{ search }}">
+    <input class="search" type="text" name="car_name" placeholder="Поиск автомобилей" value="{{ car_name }}">
 </form>
+
 <div class="cards">
     {% for c in cars %}
-    <a href="{% url 'car_detail' c.id %}">
-        <div class="card">
+    <div class="card">
+        <a href="/cars/{{ c.id }}">
             <img src="{{ c.image_url }}" alt="{{ c.name }}">
             <div class="text">
-                <p class="small">{{ c.name }}</h3>
+                <p class="small">{{ c.name }}</p>
                 <p class="small">Госномер: {{ c.license_plate }}</p>
                 <p class="small">VIN: {{ c.VIN }}</p>
                 <p class="small">Цена: {{ c.price }} ₽</p>
             </div>
-        </div>
-    </a>
+        </a>
+        <form method="post" action="{% url 'add_car_to_draft_calculation' car_id=c.id %}" class="add-to-calculation-form">
+            {% csrf_token %}
+            <button type="submit" class="add">
+                Добавить в заявку
+            </button>
+        </form>
+    </div>
     {% endfor %}
 </div>
+
 <div class="cart">
-    <a href="{% url 'request_detail' request_id=request.id %}">
+    {% if calculation_id %}
+        <a href="{% url 'calculation_detail' calculation_id=calculation_id %}">
+            <img src="{{ cart_icon_url }}" alt="Корзина">
+            <p>Количество автомобилей: <span id="cart-count">{{ count }}</span></p>
+        </a>
+    {% else %}
         <img src="{{ cart_icon_url }}" alt="Корзина">
-        <p>Количество автомобилей: {{ count }}</p>
-    </a>
+        <p>Корзина пуста</p>
+    {% endif %}
 </div>
 {% endblock %}

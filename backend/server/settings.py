@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
+    'django_minio_backend'
 ]
 
 MIDDLEWARE = [
@@ -74,8 +76,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'postgres',
+        'PORT': '5432'
     }
 }
 
@@ -124,4 +130,22 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-print(f"BASE_DIR: {BASE_DIR}")
+STORAGES = {
+    "default": {
+        "BACKEND": "django_minio_backend.models.MinioBackend",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+    },
+}
+
+MINIO_ENDPOINT = 'minio:9000'
+MINIO_USE_HTTPS = False
+MINIO_EXTERNAL_ENDPOINT = 'localhost:9000'
+MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
+MINIO_ACCESS_KEY = 'minio'
+MINIO_SECRET_KEY = 'minio124'
+MINIO_PUBLIC_BUCKETS = [
+    'images'
+]
+MINIO_MEDIA_FILES_BUCKET = "images"

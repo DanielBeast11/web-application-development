@@ -130,13 +130,36 @@ input.search::placeholder {
   background-color: var(--gray);
 }
 
-.card > img {
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.card > form > button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 0px;
+  background: var(--red);
+  color: var(--white);
+}
+
+.delete {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 0px;
+  background: var(--red);
+  color: var(--white);
+}
+
+.card > a > img {
   height: 200px;
   width: 300px;
   object-fit: cover;
 }
 
-.card > .text {
+.card > a > .text {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,6 +168,9 @@ input.search::placeholder {
 
 .cart {
   width: 1000px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
 }
 
 .cart > a {
@@ -152,7 +178,6 @@ input.search::placeholder {
   align-items: center;
   gap: 22px;
 }
-
 .car-detail {
   display: flex;
   width: 1000px;
@@ -176,36 +201,36 @@ input.search::placeholder {
   text-align: center;
 }
 
-.request-data {
+.calculation-data {
   width: 1000px;
   padding-top: 12px;
 }
 
-h1.request-detail {
+h1.calculation-detail {
   padding-top: 0px;
 }
 
-.request-items {
+.calculation-items {
   display: flex;
   flex-direction: column;
   width: 1000px;
   gap: 50px;
 }
 
-.request-item {
+.calculation-item {
   display: flex;
   border: 1px solid var(--black-border);
   border-radius: 12px;
   overflow: hidden;
 }
 
-.request-item > .request-item-img {
+.calculation-item > .calculation-item-img {
   width: 400px;
   height: 300px;
   object-fit: cover;
 }
 
-.request-item > .text {
+.calculation-item > .text {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -214,7 +239,7 @@ h1.request-detail {
   width: 300px;
 }
 
-.request-item > .m-m_field {
+.calculation-item > .m-m_field {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -224,7 +249,7 @@ h1.request-detail {
   width: 300px;
 }
 
-.request-item > .m-m_field > .m-m_mileage {
+.calculation-item > .m-m_field > .m-m_mileage {
   padding: 10px;
   font-size: 20px;
 }

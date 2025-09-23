@@ -1,86 +1,72 @@
-from minio import Minio
+from django.db import models
+from django.forms import model_to_dict
+from django.utils import timezone
 
-client = Minio(
-    "localhost:9000",
-    access_key="minio",
-    secret_key="minio124",
-    secure=False
-)
-
-def get_image_url(key: str) -> str:
-    return client.presigned_get_object("images", key)
+from django.contrib.auth.models import User
 
 
-cars = [
-    {
-        'id': 1,
-        'name': 'GAZelle Business',
-        'license_plate': 'А911ВЕ77',
-        'VIN': 'XW8ZZZ61ZHG047860',
-        'price': 1200000,
-        'img_key': 'GAZelle1.jpeg',
-        'description': 'Легкий коммерческий грузовик GAZelle Business с дизельным двигателем Cummins ISF2.8'
-    },
-    {
-        'id': 2,
-        'name': 'Ford Transit',
-        'license_plate': 'А923ВЕ77',
-        'VIN': 'XW8ZZZ61ZHG457860',
-        'price': 2500000,
-        'img_key': 'FordTransit1.jpg',
-        'description': 'Среднетоннажный фургон Ford Transit с дизельным двигателем 2.2 TDCi'
-    },
-    {
-        'id': 3,
-        'name': 'Iveco Daily 50C15',
-        'license_plate': 'C999XЕ77',
-        'VIN': 'XW8ZZZ61ZHG023860',
-        'price': 1300000,
-        'img_key': 'Iveco1.jpg',
-        'description': 'Легкий грузовик Iveco Daily 50C15 с дизельным двигателем F1A'
-    },
-    {
-        'id': 4,
-        'name': 'GAZelle Next',
-        'license_plate': 'А902ВЕ77',
-        'VIN': 'XW8ZZZ61ZHG047123',
-        'price': 1400000,
-        'img_key': 'GAZelle2.jpg',
-        'description': 'Модернизированная версия GAZelle Next с бензиновым двигателем EvoTech 2.7'
-    },
-    {
-        'id': 5,
-        'name': 'Ford Transit',
-        'license_plate': 'B123ВЕ77',
-        'VIN': 'XW8ZZZ61ZGD457860',
-        'price': 2100000,
-        'img_key': 'FordTransit2.jpg',
-        'description': 'Ford Transit с высокой крышей и дизельным двигателем 2.0 EcoBlue'
-    },
-    {
-        'id': 6,
-        'name': 'Iveco Daily 70C15',
-        'license_plate': 'C100XЕ77',
-        'VIN': 'XW8ZZZ61ZHG047341',
-        'price': 1700000,
-        'img_key': 'Iveco2.png',
-        'description': 'Тяжелый грузовик Iveco Daily 70C15 с дизельным двигателем F1C'
-    }
-]
+class Car(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название")
+    license_plate = models.CharField(max_length=100, verbose_name="Госномер", default="Unknown")
+    VIN = models.CharField(max_length=100, verbose_name="VIN")
+    price = models.IntegerField(verbose_name="Стоимость")
+    image = models.ImageField(blank=True)
+    description = models.TextField(verbose_name="Описание")
 
-depreciation_request = {
-    "id": 1,
-    "total_depreciation": 944200,
-    "date": "07.09.2025",
-    "status": "Черновик",
-    "cars": [
-        {
-            "car_id": 2,
-            "mileage": 100000,
-        },
-        {
-            "car_id": 3,
-            "mileage": 170000,
-        }
-    ],
-}
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Автомобиль"
+        verbose_name_plural = "Автомобили"
+        db_table = "cars"
+        ordering = ("pk",)
+
+class DepreciationCalculation(models.Model):
+    STATUS = (
+        (1, 'Черновик'),
+        (2, 'Сформирован'),
+        (3, 'Завершён'),
+        (4, 'Отклонён'),
+        (5, 'Удалён'),
+    )
+
+    status = models.IntegerField(choices=STATUS, default=1, verbose_name="Статус")
+    creation_date = models.DateTimeField(verbose_name="Дата создания", default=timezone.now)
+    formation_date = models.DateTimeField(verbose_name="Дата формирования", blank=True, null=True)
+    completion_date = models.DateTimeField(verbose_name="Дата завершения", blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name="Пользователь", null=True, related_name='user')
+    moderator = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name="Модератор", null=True, related_name='moderator')
+    sum = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return "Расчет амортизации №" + str(self.pk)
+    
+    def get_cars(self):
+        return [
+            {
+                **model_to_dict(item.car),
+                'mileage': item.mileage,
+            }
+            for item in CarDepreciationCalculation.objects.filter(depreciation_calculation=self)
+        ]
+
+    class Meta:
+        verbose_name = "Расчёт"
+        verbose_name_plural = "Расчёты"
+        db_table = "depreciation_calculations"
+        ordering = ('-formation_date',)
+
+class CarDepreciationCalculation(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.DO_NOTHING)
+    depreciation_calculation = models.ForeignKey(DepreciationCalculation, on_delete=models.DO_NOTHING)
+    mileage = models.IntegerField(default = 0, verbose_name="Пробег (км)")
+
+    def __str__(self):
+        return "М-М №" + str(self.pk)
+
+    class Meta:
+        verbose_name = "М-М"
+        verbose_name_plural = "М-М"
+        db_table = "car_depreciation_calculation"
+        ordering = ('pk', )

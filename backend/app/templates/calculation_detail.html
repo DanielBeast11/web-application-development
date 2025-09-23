@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="calculation-data">
+    <h1>Логистическая компания CityExpress</h1>
+    <p class="small">Дата создания заявки: {{ calculation.creation_date|date:"d.m.Y" }}</p>
+</div>
+
+<h1 class="main-heading calculation-detail">Составление заявки</h1>
+<div class="calculation-items">
+    {% for car in calculation_cars %}
+    <div class="calculation-item">
+        <img src="{{ car.image_url|default:'/static/default.png' }}" alt="{{ car.name }}" width="200" class="calculation-item-img">
+        <div class="text">
+            <p class="small">{{ car.name }}</p>
+            <p class="small">Госномер: {{ car.license_plate }}</p>
+            <p class="small">VIN: {{ car.VIN }}</p>
+            <p class="small">Стоимость: {{ car.price }} ₽</p>
+        </div>
+        <div class="m-m_field">
+            <div class="m-m_mileage">Пробег: {{ car.request_mileage }} км</div>
+        </div>
+    </div>
+    {% empty %}
+    <p>В заявке нет автомобилей.</p>
+    {% endfor %}
+</div>
+<div class="calculation-data">
+    <p>Общая стоимость амортизационных отчислений: {{ total_depreciation }} ₽</p>
+</div>
+<form method="post" action="{% url 'delete_calculation' calculation.id %}" class="d-flex justify-content-center">
+{% csrf_token %}
+    <button class="delete" type="submit">
+        Удалить
+    </button>
+</form>
+{% endblock %}
