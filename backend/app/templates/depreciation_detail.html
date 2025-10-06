@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="calculation-data">
+<div class="depreciation-data">
     <h1>Логистическая компания CityExpress</h1>
-    <p class="small">Дата создания заявки: {{ calculation.creation_date|date:"d.m.Y" }}</p>
+    <p class="small">Дата создания заявки: {{ depreciation.creation_date|date:"d.m.Y" }}</p>
 </div>
 
-<h1 class="main-heading calculation-detail">Составление заявки</h1>
-<div class="calculation-items">
-    {% for car in calculation_cars %}
-    <div class="calculation-item">
-        <img src="{{ car.image_url|default:'/static/default.png' }}" alt="{{ car.name }}" width="200" class="calculation-item-img">
+<h1 class="main-heading depreciation-detail">Составление заявки</h1>
+<div class="depreciation-items">
+    {% for car in depreciation_cars %}
+    <div class="depreciation-item">
+        <img src="{{ car.image_url|default:'/static/default.png' }}" alt="{{ car.name }}" width="200" class="depreciation-item-img">
         <div class="text">
             <p class="small">{{ car.name }}</p>
             <p class="small">Госномер: {{ car.license_plate }}</p>
@@ -17,17 +17,18 @@
             <p class="small">Стоимость: {{ car.price }} ₽</p>
         </div>
         <div class="m-m_field">
-            <div class="m-m_mileage">Пробег: {{ car.request_mileage }} км</div>
+            <div class="m-m_mileage">Пробег: (км)</div>
+            <input disabled type="text" class="form-control" value="{{ car.request_mileage }}">
         </div>
     </div>
     {% empty %}
     <p>В заявке нет автомобилей.</p>
     {% endfor %}
 </div>
-<div class="calculation-data">
+<div class="depreciation-data">
     <p>Общая стоимость амортизационных отчислений: {{ total_depreciation }} ₽</p>
 </div>
-<form method="post" action="{% url 'delete_calculation' calculation.id %}" class="d-flex justify-content-center">
+<form method="post" action="{% url 'delete_depreciation' depreciation.id %}" class="d-flex justify-content-center">
 {% csrf_token %}
     <button class="delete" type="submit">
         Удалить

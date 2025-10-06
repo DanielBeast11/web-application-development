@@ -78,32 +78,32 @@ def add_depreciation_calculations():
     add_depreciation_calculation(2, cars, users[0], moderators)
 
 def add_depreciation_calculation(status, cars, user, moderators):
-    calculation = DepreciationCalculation.objects.create()
-    calculation.status = status
+    depreciation = DepreciationCalculation.objects.create()
+    depreciation.status = status
 
     if status in [3, 4]:
-        calculation.moderator = random.choice(moderators)
-        calculation.completion_date = random_date()
-        calculation.formation_date = calculation.completion_date - random_timedelta()
-        calculation.creation_date = calculation.formation_date - random_timedelta()
+        depreciation.moderator = random.choice(moderators)
+        depreciation.completion_date = random_date()
+        depreciation.formation_date = depreciation.completion_date - random_timedelta()
+        depreciation.creation_date = depreciation.formation_date - random_timedelta()
     else:
-        calculation.formation_date = random_date()
-        calculation.creation_date = calculation.formation_date - random_timedelta()
+        depreciation.formation_date = random_date()
+        depreciation.creation_date = depreciation.formation_date - random_timedelta()
 
-    calculation.user = user
+    depreciation.user = user
 
     for car in random.sample(list(cars), 3):
         item = CarDepreciationCalculation(
-            depreciation_calculation=calculation,
+            depreciation_calculation=depreciation,
             car=car,
             mileage=random.randint(5000, 200000)
         )
         item.save()
 
     if status == 3:
-        calculation.sum = depreciation_calculation(calculation.get_cars())
+        depreciation.sum = depreciation_calculation(depreciation.get_cars())
     
-    calculation.save()
+    depreciation.save()
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):

@@ -201,36 +201,36 @@ input.search::placeholder {
   text-align: center;
 }
 
-.calculation-data {
+.depreciation-data {
   width: 1000px;
   padding-top: 12px;
 }
 
-h1.calculation-detail {
+h1.depreciation-detail {
   padding-top: 0px;
 }
 
-.calculation-items {
+.depreciation-items {
   display: flex;
   flex-direction: column;
   width: 1000px;
   gap: 50px;
 }
 
-.calculation-item {
+.depreciation-item {
   display: flex;
   border: 1px solid var(--black-border);
   border-radius: 12px;
   overflow: hidden;
 }
 
-.calculation-item > .calculation-item-img {
+.depreciation-item > .depreciation-item-img {
   width: 400px;
   height: 300px;
   object-fit: cover;
 }
 
-.calculation-item > .text {
+.depreciation-item > .text {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -239,7 +239,7 @@ h1.calculation-detail {
   width: 300px;
 }
 
-.calculation-item > .m-m_field {
+.depreciation-item > .m-m_field {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -249,7 +249,13 @@ h1.calculation-detail {
   width: 300px;
 }
 
-.calculation-item > .m-m_field > .m-m_mileage {
+.depreciation-item > .m-m_field > .m-m_mileage {
   padding: 10px;
+  font-size: 20px;
+}
+
+.form-control {
+  text-align: center;
+  color: var(--black);
   font-size: 20px;
 }
