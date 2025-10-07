@@ -2,11 +2,13 @@ import random
 from datetime import timedelta
 
 from django.contrib.auth import authenticate
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from .calc import calc
 from .serializers import *
 
 
@@ -22,27 +24,21 @@ def get_moderator():
     return User.objects.filter(is_superuser=True).first()
 
 
+def identity_user(request):
+    return get_user()
+
+
 @api_view(["GET"])
 def search_cars(request):
     car_name = request.GET.get("car_name", "")
 
     cars = Car.objects.filter(status=1)
-
     if car_name:
         cars = cars.filter(name__icontains=car_name)
 
     serializer = CarsSerializer(cars, many=True)
 
-    draft_depreciation = get_draft_depreciation()
-
-    resp = {
-        "cars": serializer.data,
-        "cars_count": CarDepreciation.objects.filter(
-            depreciation=draft_depreciation).count() if draft_depreciation else None,
-        "draft_depreciation": draft_depreciation.pk if draft_depreciation else None
-    }
-
-    return Response(resp)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -112,7 +108,6 @@ def add_car_to_depreciation(request, car_id):
     if draft_depreciation is None:
         draft_depreciation = Depreciation.objects.create()
         draft_depreciation.owner = get_user()
-        draft_depreciation.date_created = timezone.now()
         draft_depreciation.save()
 
     if CarDepreciation.objects.filter(depreciation=draft_depreciation, car=car).exists():
@@ -169,6 +164,22 @@ def search_depreciations(request):
 
 
 @api_view(["GET"])
+def get_depreciation_cart_info(request):
+    draft_depreciation = get_draft_depreciation()
+
+    if not draft_depreciation:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    cars = CarDepreciation.objects.filter(depreciation=draft_depreciation)
+    resp = {
+        "cars_count": cars.count(),
+        "draft_depreciation": draft_depreciation.pk
+    }
+
+    return Response(resp)
+
+
+@api_view(["GET"])
 def get_depreciation_by_id(request, depreciation_id):
     if not Depreciation.objects.filter(pk=depreciation_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -187,8 +198,10 @@ def update_depreciation(request, depreciation_id):
     depreciation = Depreciation.objects.get(pk=depreciation_id)
     serializer = DepreciationSerializer(depreciation, data=request.data, partial=True)
 
-    if serializer.is_valid():
-        serializer.save()
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer.save()
 
     return Response(serializer.data)
 
@@ -196,19 +209,27 @@ def update_depreciation(request, depreciation_id):
 @api_view(["PUT"])
 def update_status_user(request, depreciation_id):
     if not Depreciation.objects.filter(pk=depreciation_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            "error": "амортизация не найден"
+        }, status=status.HTTP_404_NOT_FOUND)
 
     depreciation = Depreciation.objects.get(pk=depreciation_id)
 
     if depreciation.status != 1:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({
+            "error": "амортизация не в том статусе"
+        }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    if not depreciation.price:
+        return Response({
+            "error": "поле price не заполнено"
+        }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     depreciation.status = 2
     depreciation.date_formation = timezone.now()
     depreciation.save()
 
-    serializer = DepreciationSerializer(depreciation, many=False)
-
+    serializer = DepreciationSerializer(depreciation)
     return Response(serializer.data)
 
 
@@ -218,24 +239,29 @@ def update_status_admin(request, depreciation_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     request_status = int(request.data["status"])
-
     if request_status not in [3, 4]:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({
+            "error": "некорректный status"
+        }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     depreciation = Depreciation.objects.get(pk=depreciation_id)
 
     if depreciation.status != 2:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({
+            "error": "амортизация не в том статусе"
+        }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     if request_status == 3:
-        depreciation.summ = random.randint(1, 10)
+        serializer = DepreciationSerializer(depreciation)
+        depreciation.summ = calc(serializer.data)
 
     depreciation.date_complete = timezone.now()
     depreciation.status = request_status
     depreciation.moderator = get_moderator()
     depreciation.save()
 
-    return Response(status=status.HTTP_200_OK)
+    serializer = DepreciationSerializer(depreciation)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
@@ -274,6 +300,12 @@ def delete_car_from_depreciation(request, depreciation_id, car_id):
 def update_car_in_depreciation(request, depreciation_id, car_id):
     if not CarDepreciation.objects.filter(car_id=car_id, depreciation_id=depreciation_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    depreciation = Depreciation.objects.get(pk=depreciation_id)
+    if depreciation.status != 1:
+        return Response({
+            "error": "Некорректный статус амортизации"
+        }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     item = CarDepreciation.objects.get(car_id=car_id, depreciation_id=depreciation_id)
 
@@ -318,6 +350,13 @@ def login(request):
 @api_view(["POST"])
 def logout(request):
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def user_info(request):
+    user = identity_user(request)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["PUT"])

@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/cars/<int:car_id>/add_to_depreciation/', add_car_to_depreciation),  # POST
 
     path('api/depreciations/', search_depreciations),  # GET
+    path('api/depreciations/depreciation_cart/', get_depreciation_cart_info),  # GET
     path('api/depreciations/<int:depreciation_id>/', get_depreciation_by_id),  # GET
     path('api/depreciations/<int:depreciation_id>/update/', update_depreciation),  # PUT
     path('api/depreciations/<int:depreciation_id>/update_status_user/', update_status_user),  # PUT
@@ -21,7 +22,8 @@ urlpatterns = [
     path('api/depreciations/<int:depreciation_id>/delete_car/<int:car_id>/', delete_car_from_depreciation),  # DELETE
 
     path('api/users/register/', register), # POST
+    path('api/users/<int:user_id>/update/', update_user), # PUT
+    path("api/users/info/", user_info), # GET
     path('api/users/login/', login), # POST
     path('api/users/logout/', logout), # POST
-    path('api/users/<int:user_id>/update/', update_user) # PUT
 ]

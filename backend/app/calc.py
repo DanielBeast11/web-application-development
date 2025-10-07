@@ -1,6 +1,7 @@
-def calc(cars, resource_mileage=500000):
+def calc(depreciation, resource_mileage=500000):
     total_depreciation = 0
 
+    cars = depreciation["cars"]
     for car in cars:
         car_price = car['price']
         mileage = car['mileage']
@@ -13,6 +14,6 @@ def calc(cars, resource_mileage=500000):
         # Ограничиваем амортизацию начальной стоимостью
         car_depreciation = min(car_depreciation, car_price)
 
-        total_depreciation += car_depreciation
+        total_depreciation += car_depreciation * 1000
 
     return round(total_depreciation, 2)

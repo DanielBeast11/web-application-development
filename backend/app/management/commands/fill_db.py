@@ -10,7 +10,7 @@ def add_users():
     User.objects.create_user("user", "user@user.com", "1234", first_name="user", last_name="user")
     User.objects.create_superuser("root", "root@root.com", "1234", first_name="root", last_name="root")
 
-    for i in range(1, 10):
+    for i in range(2, 10):
         User.objects.create_user(f"user{i}", f"user{i}@user.com", "1234", first_name=f"user{i}", last_name=f"user{i}")
         User.objects.create_superuser(f"root{i}", f"root{i}@root.com", "1234", first_name=f"user{i}", last_name=f"user{i}")
 
@@ -65,6 +65,7 @@ def add_cars():
         description = 'Тяжелый грузовик Iveco Daily 70C15 с дизельным двигателем F1C'
     )
 
+
 def add_depreciations():
     users = User.objects.filter(is_staff=False)
     moderators = User.objects.filter(is_staff=True)
@@ -99,19 +100,21 @@ def add_depreciation(status, cars, owner, moderators):
         depreciation.date_formation = random_date()
         depreciation.date_created = depreciation.date_formation - random_timedelta()
 
+    depreciation.price = random.randint(1, 10)
+
     depreciation.owner = owner
 
     for car in random.sample(list(cars), 3):
         item = CarDepreciation(
             depreciation=depreciation,
             car=car,
-            mileage=1000 * random.randint(100, 200)
+            mileage=random.randint(1, 10)
         )
         item.save()
 
     if status == 3:
         serializer = DepreciationSerializer(depreciation)
-        depreciation.summ = calc(serializer.data["cars"])
+        depreciation.summ = calc(serializer.data)
 
     depreciation.save()
 

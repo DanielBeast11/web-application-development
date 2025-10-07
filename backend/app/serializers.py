@@ -6,7 +6,7 @@ from .models import *
 class CarsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ("id", "name", "status", "vin", "image", "price", "license_plate")
+        fields = ("id", "name", "status", "vin", "image", "price", "image")
 
 
 class CarSerializer(CarsSerializer):
@@ -39,7 +39,7 @@ class CarItemSerializer(CarSerializer):
 
     class Meta:
         model = Car
-        fields = ("id", "name", "status", "vin", "image", "mileage", "price", "description", "license_plate")
+        fields = ("id", "name", "status", "vin", "image", "price", "image", "mileage")
 
 
 class CarDepreciationSerializer(serializers.ModelSerializer):
