@@ -39,7 +39,7 @@ class CarItemSerializer(CarSerializer):
 
     class Meta:
         model = Car
-        fields = ("id", "name", "status", "vin", "image", "price", "image", "mileage")
+        fields = ("id", "name", "status", "vin", "image", "price", "mileage")
 
 
 class CarDepreciationSerializer(serializers.ModelSerializer):

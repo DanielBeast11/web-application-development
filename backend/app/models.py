@@ -70,10 +70,10 @@ class CarDepreciation(models.Model):
     mileage = models.IntegerField(default=0)
 
     def __str__(self):
-        return "м-м №" + str(self.pk)
+        return "Амортизация автомобиля №" + str(self.pk)
 
     class Meta:
-        verbose_name = "м-м"
-        verbose_name_plural = "м-м"
+        verbose_name = "Амортизация автомобиля"
+        verbose_name_plural = "Амортизация автомобилей"
         db_table = "car_depreciation"
         ordering = ('pk', )

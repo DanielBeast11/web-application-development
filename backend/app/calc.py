@@ -14,6 +14,5 @@ def calc(depreciation, resource_mileage=500000):
         # Ограничиваем амортизацию начальной стоимостью
         car_depreciation = min(car_depreciation, car_price)
 
-        total_depreciation += car_depreciation * 1000
-
+        total_depreciation += car_depreciation
     return round(total_depreciation, 2)
