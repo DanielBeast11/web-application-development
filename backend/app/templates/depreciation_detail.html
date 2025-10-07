@@ -4,7 +4,10 @@
     <h1>Логистическая компания CityExpress</h1>
     <p class="small">Дата создания заявки: {{ depreciation.creation_date|date:"d.m.Y" }}</p>
 </div>
-
+<div class="depreciation-data inline">
+    <p class="inline">Первичная оценка суммы амортизации (руб): </p>
+    <input type="text" class="form-control inline" value="0">
+</div>
 <h1 class="main-heading depreciation-detail">Составление заявки</h1>
 <div class="depreciation-items">
     {% for car in depreciation_cars %}
