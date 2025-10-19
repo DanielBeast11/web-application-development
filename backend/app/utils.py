@@ -1,6 +1,10 @@
 import random
 from datetime import timedelta
+
+from django.contrib.auth.models import User
 from faker import Faker
+
+from app.models import Depreciation
 
 f = Faker("ru_RU")
 
@@ -22,3 +26,20 @@ def random_text():
 
 def random_phone():
     return f.phone_number()
+
+
+def get_draft_depreciation():
+    return Depreciation.objects.filter(status=1).first()
+
+
+def get_user():
+    return User.objects.filter(is_superuser=False).first()
+
+
+def get_moderator():
+    return User.objects.filter(is_superuser=True).first()
+
+
+def identity_user(request):
+    return get_user()
+

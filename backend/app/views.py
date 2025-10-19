@@ -1,4 +1,3 @@
-import random
 from datetime import timedelta
 
 from django.contrib.auth import authenticate
@@ -10,22 +9,7 @@ from rest_framework.response import Response
 
 from .calc import calc
 from .serializers import *
-
-
-def get_draft_depreciation():
-    return Depreciation.objects.filter(status=1).first()
-
-
-def get_user():
-    return User.objects.filter(is_superuser=False).first()
-
-
-def get_moderator():
-    return User.objects.filter(is_superuser=True).first()
-
-
-def identity_user(request):
-    return get_user()
+from .utils import get_draft_depreciation, get_user, get_moderator, identity_user
 
 
 @api_view(["GET"])
@@ -165,16 +149,18 @@ def search_depreciations(request):
 
 @api_view(["GET"])
 def get_depreciation_cart_info(request):
-    draft_depreciation = get_draft_depreciation()
-
-    if not draft_depreciation:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    cars = CarDepreciation.objects.filter(depreciation=draft_depreciation)
     resp = {
-        "cars_count": cars.count(),
-        "draft_depreciation": draft_depreciation.pk
+        "cars_count": 0,
+        "draft_depreciation": 0
     }
+
+    draft_depreciation = get_draft_depreciation()
+    if draft_depreciation:
+        cars = CarDepreciation.objects.filter(depreciation=draft_depreciation)
+        resp = {
+            "cars_count": cars.count(),
+            "draft_depreciation": draft_depreciation.pk
+        }
 
     return Response(resp)
 
@@ -335,8 +321,7 @@ def register(request):
 def login(request):
     serializer = UserLoginSerializer(data=request.data)
 
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+    serializer.is_valid(raise_exception=True)
 
     user = authenticate(**serializer.data)
     if user is None:
@@ -360,16 +345,11 @@ def user_info(request):
 
 
 @api_view(["PUT"])
-def update_user(request, user_id):
-    if not User.objects.filter(pk=user_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def update_user(request):
+    user = identity_user(request)
 
-    user = User.objects.get(pk=user_id)
-    serializer = UserSerializer(user, data=request.data, partial=True)
-
-    if not serializer.is_valid():
-        return Response(status=status.HTTP_409_CONFLICT)
-
+    serializer = UserUpdateProfileSerializer(user, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
     serializer.save()
 
     return Response(serializer.data)

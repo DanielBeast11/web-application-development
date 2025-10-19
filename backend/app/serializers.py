@@ -6,7 +6,7 @@ from .models import *
 class CarsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ("id", "name", "status", "vin", "image", "price", "image")
+        fields = ("id", "name", "status", "vin", "license_plate", "price", "image")
 
 
 class CarSerializer(CarsSerializer):
@@ -39,7 +39,7 @@ class CarItemSerializer(CarSerializer):
 
     class Meta:
         model = Car
-        fields = ("id", "name", "status", "vin", "image", "price", "mileage")
+        fields = ("id", "name", "status", "vin", "license_plate", "price", "image", "mileage")
 
 
 class CarDepreciationSerializer(serializers.ModelSerializer):
@@ -76,3 +76,22 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
+
+
+class UserUpdateProfileSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+
+        instance = super().update(instance, validated_data)
+
+        if password and password.strip() and not self.instance.check_password(password):
+            instance.set_password(password)
+            instance.save()
+
+        return instance

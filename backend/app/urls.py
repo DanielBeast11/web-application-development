@@ -22,7 +22,7 @@ urlpatterns = [
     path('api/depreciations/<int:depreciation_id>/delete_car/<int:car_id>/', delete_car_from_depreciation),  # DELETE
 
     path('api/users/register/', register), # POST
-    path('api/users/<int:user_id>/update/', update_user), # PUT
+    path('api/users/update/', update_user), # PUT
     path("api/users/info/", user_info), # GET
     path('api/users/login/', login), # POST
     path('api/users/logout/', logout), # POST
