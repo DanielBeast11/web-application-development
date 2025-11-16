@@ -4,7 +4,7 @@ psycopg
 djangorestframework
 Pillow
 minio==7.2.16
-django-minio-backend
+django-minio-backend==3.8.0
 django-cors-headers
 Faker
 drf-yasg
