@@ -1,0 +1,124 @@
+version: '3.7'
+
+services:
+  django:
+    build: ./lab4
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./lab4:/usr/src/app
+    ports:
+      - "$IP_ADDRESS:8000:8000"
+    environment:
+      PYTHONUNBUFFERED: 1
+    env_file:
+      - .env
+    depends_on:
+      - pgdb
+      - migration
+      - minio
+      - redis
+
+  migration:
+    build: ./lab4
+    container_name: migration
+    command: bash -c "python manage.py makemigrations && python manage.py migrate --noinput && python manage.py flush --no-input && python manage.py fill_db"
+    volumes:
+      - ./lab4:/usr/src/app
+    depends_on:
+      pgdb:
+        condition: service_healthy
+
+  pgdb:
+    image: postgres
+    container_name: pgdb
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - type: volume
+        source: pgdbdata
+        target: /var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server --console-address ":9001" /data/
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    expose:
+      - "9000"
+      - "9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - minio-data:/data
+
+  createbucket:
+    image: minio/mc:latest
+    container_name: createbucket
+    depends_on:
+      - minio
+    volumes:
+      - ./lab4/app/static/images:/images
+    entrypoint: >
+      /bin/sh -c "
+        until (mc alias set myminio http://minio:9000 minio minio123 2>/dev/null) do echo '...' && sleep 1; done;
+        mc mb myminio/images;
+        mc anonymous set public myminio/images;
+        mc cp --recursive /images/ myminio/images;
+        exit 0;
+      "
+
+  nginx:
+    image: nginx:1.19.2-alpine
+    container_name: nginx
+    hostname: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "$IP_ADDRESS:9000:9000"
+      - "$IP_ADDRESS:9001:9001"
+    environment:
+      IP_ADDRESS: ${IP_ADDRESS}
+    env_file:
+      - .env
+    depends_on:
+      - minio
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./:/usr/src/app/dаta:/root/redis
+      - ./:/usr/src/app/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=my-password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+  remote_service:
+    build: ./remote_service
+    container_name: remote_service
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdbdata: null
+  minio-data:
